@@ -14,4 +14,5 @@ group :test do
   gem 'bootsnap'
   gem 'pry-rails'
   gem 'rspec-rails'
+  gem 'database_rewinder'
 end
