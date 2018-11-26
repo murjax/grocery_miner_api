@@ -15,4 +15,11 @@ group :test do
   gem 'pry-rails'
   gem 'rspec-rails'
   gem 'database_rewinder'
+  gem 'capybara'
+  gem 'chromedriver-helper'
+  gem 'rails-controller-testing'
+  gem 'selenium-webdriver'
+  gem 'webmock'
+  gem 'factory_bot_rails'
+  gem 'faker'
 end
