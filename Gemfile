@@ -8,6 +8,7 @@ gem 'puma', '~> 3.11'
 gem 'devise'
 gem 'devise-jwt'
 gem 'dotenv-rails'
+gem 'rack-cors', require: 'rack/cors'
 
 group :development do
   gem 'listen'
