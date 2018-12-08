@@ -36,6 +36,8 @@ module GroceryMiner
       allow do
         origins '*'
         resource '*', headers: :any, methods: [:get, :post, :options]
+        headers: %w(Authorization),
+        expose: %w(Authorization),
       end
     end
   end
