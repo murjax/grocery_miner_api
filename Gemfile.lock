@@ -240,6 +240,7 @@ DEPENDENCIES
   dotenv-rails
   factory_bot_rails
   faker
+  jwt
   listen
   pg (>= 0.18, < 2.0)
   pry-rails
