@@ -10,10 +10,16 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_11_26_223325) do
+ActiveRecord::Schema.define(version: 2018_12_11_235418) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "items", force: :cascade do |t|
+    t.string "name", limit: 255, null: false
+    t.date "purchase_date", null: false
+    t.decimal "price", null: false
+  end
 
   create_table "jwt_blacklist", force: :cascade do |t|
     t.string "jti", null: false
