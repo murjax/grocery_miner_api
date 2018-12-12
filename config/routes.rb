@@ -11,4 +11,6 @@ Rails.application.routes.draw do
       registrations: 'registrations'
     }
   root to: 'home#index'
+
+  resources :items
 end
