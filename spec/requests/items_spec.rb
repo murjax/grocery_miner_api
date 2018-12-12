@@ -77,8 +77,8 @@ RSpec.describe 'Items', type: :request do
     it 'creates item' do
       name = 'Apples'
       price = 19.20
-      post items_path, params: { item: { name: name, price: price, user_id: user.id, purchase_date: Date.current } }
-      json_response = JSON.parse(response.body)
+      post items_path, params: { item: { name: name, price: price, purchase_date: Date.current } }
+     json_response = JSON.parse(response.body)
       item = Item.last
       expect(json_response['id']).to eq(item.id)
       expect(json_response['price']).to eq(price.to_s)
@@ -88,7 +88,7 @@ RSpec.describe 'Items', type: :request do
     context 'invalid attributes' do
       it 'does not create item' do
         price = 19.20
-        post items_path, params: { item: { name: nil, price: price, user_id: user.id, purchase_date: Date.current } }
+        post items_path, params: { item: { name: nil, price: price, purchase_date: Date.current } }
         json_response = JSON.parse(response.body)
         expect(json_response['errors']['name']).to eq("can't be blank")
         expect(response.status).to eq(422)

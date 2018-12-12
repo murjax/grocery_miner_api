@@ -1,3 +1,3 @@
 class ItemSerializer < ActiveModel::Serializer
-  attributes(:name, :price, :purchase_date)
+  attributes(:id, :name, :price, :purchase_date)
 end

@@ -19,6 +19,7 @@ class ItemsController < ApplicationController
 
   def create
     item = Item.new(permitted_params)
+    item.user = current_user
     if item.save
       render json: item, adapter: :json
     else
@@ -37,6 +38,6 @@ class ItemsController < ApplicationController
   end
 
   def permitted_params
-    params.require(:item).permit(:name, :price, :purchase_date, :user_id)
+    params.require(:item).permit(:name, :price, :purchase_date)
   end
 end
