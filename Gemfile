@@ -10,6 +10,7 @@ gem 'jwt'
 gem 'devise-jwt'
 gem 'dotenv-rails'
 gem 'rack-cors', require: 'rack/cors'
+gem 'active_model_serializers'
 
 group :development do
   gem 'listen'
