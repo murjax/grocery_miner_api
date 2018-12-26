@@ -12,6 +12,9 @@ Rails.application.routes.draw do
     }
   root to: 'home#index'
 
-  resources :items
+  resources :items do
+    get :monthly, on: :collection, controller: 'items/monthly', to: 'items/monthly#index'
+  end
+
   resources :taxes
 end
