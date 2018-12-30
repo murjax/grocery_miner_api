@@ -17,6 +17,7 @@ Rails.application.routes.draw do
     get :yearly, on: :collection, controller: 'items/yearly', to: 'items/yearly#index'
     get :expense, on: :collection, controller: 'items/expense', to: 'items/expense#index'
     get :frequent, on: :collection, controller: 'items/frequent', to: 'items/frequent#index'
+    get :total_per_month, on: :collection, controller: 'items/total_per_month', to: 'items/total_per_month#index'
   end
 
   resources :taxes
