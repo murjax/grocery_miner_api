@@ -1,4 +1,4 @@
-module Items
+module Purchases
   class ExpenseController < ApplicationController
     before_action :authenticate_user!
 
@@ -8,10 +8,10 @@ module Items
                    else
                      Date.current - 30.days
                    end
-      items = Item.where(user: current_user)
+      purchases = Purchase.where(user: current_user)
         .where('purchase_date >= ?', date_limit)
         .order('price DESC').limit(5)
-      render json: items, adapter: :json
+      render json: purchases, adapter: :json
     end
   end
 end

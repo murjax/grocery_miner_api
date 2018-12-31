@@ -12,9 +12,9 @@ RSpec.describe 'Taxes', type: :request do
       get taxes_path
       json_response = JSON.parse(response.body)
       expect(json_response.count).to eq(1)
-      expect(json_response.first['id']).to eq(user_tax.id)
-      expect(json_response.first['charge_date']).to eq(user_tax.charge_date.to_s)
-      expect(json_response.first['amount']).to eq(user_tax.amount.to_s)
+      expect(json_response['taxes'].first['id']).to eq(user_tax.id)
+      expect(json_response['taxes'].first['charge_date']).to eq(user_tax.charge_date.to_s)
+      expect(json_response['taxes'].first['amount']).to eq(user_tax.amount.to_s)
     end
   end
 
@@ -24,9 +24,9 @@ RSpec.describe 'Taxes', type: :request do
       it 'returns tax' do
         get tax_path(tax)
         json_response = JSON.parse(response.body)
-        expect(json_response['id']).to eq(tax.id)
-        expect(json_response['charge_date']).to eq(tax.charge_date.to_s)
-        expect(json_response['amount']).to eq(tax.amount.to_s)
+        expect(json_response['tax']['id']).to eq(tax.id)
+        expect(json_response['tax']['charge_date']).to eq(tax.charge_date.to_s)
+        expect(json_response['tax']['amount']).to eq(tax.amount.to_s)
       end
     end
 
@@ -48,7 +48,7 @@ RSpec.describe 'Taxes', type: :request do
         put tax_path(tax), params: { tax: { amount: amount } }
         expect(tax.reload.amount).to eq(amount)
         json_response = JSON.parse(response.body)
-        expect(json_response['amount']).to eq(amount.to_s)
+        expect(json_response['tax']['amount']).to eq(amount.to_s)
       end
 
       context 'invalid attributes' do
@@ -79,8 +79,8 @@ RSpec.describe 'Taxes', type: :request do
       post taxes_path, params: { tax: { amount: amount, user_id: user.id, charge_date: Date.current } }
       json_response = JSON.parse(response.body)
       tax = Tax.last
-      expect(json_response['id']).to eq(tax.id)
-      expect(json_response['amount']).to eq(amount.to_s)
+      expect(json_response['tax']['id']).to eq(tax.id)
+      expect(json_response['tax']['amount']).to eq(amount.to_s)
     end
 
     context 'invalid attributes' do

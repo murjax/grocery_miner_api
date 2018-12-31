@@ -10,22 +10,22 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_12_12_002217) do
+ActiveRecord::Schema.define(version: 2018_12_31_173758) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
-  create_table "items", force: :cascade do |t|
+  create_table "jwt_blacklist", force: :cascade do |t|
+    t.string "jti", null: false
+    t.index ["jti"], name: "index_jwt_blacklist_on_jti"
+  end
+
+  create_table "purchases", force: :cascade do |t|
     t.string "name", limit: 255, null: false
     t.date "purchase_date", null: false
     t.decimal "price", null: false
     t.bigint "user_id"
-    t.index ["user_id"], name: "index_items_on_user_id"
-  end
-
-  create_table "jwt_blacklist", force: :cascade do |t|
-    t.string "jti", null: false
-    t.index ["jti"], name: "index_jwt_blacklist_on_jti"
+    t.index ["user_id"], name: "index_purchases_on_user_id"
   end
 
   create_table "taxes", force: :cascade do |t|
@@ -47,6 +47,6 @@ ActiveRecord::Schema.define(version: 2018_12_12_002217) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
-  add_foreign_key "items", "users"
+  add_foreign_key "purchases", "users"
   add_foreign_key "taxes", "users"
 end
