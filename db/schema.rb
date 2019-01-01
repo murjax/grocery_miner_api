@@ -10,10 +10,16 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_12_31_173758) do
+ActiveRecord::Schema.define(version: 2019_01_01_180939) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "items", force: :cascade do |t|
+    t.string "name", limit: 255, null: false
+    t.bigint "user_id", null: false
+    t.index ["user_id"], name: "index_items_on_user_id"
+  end
 
   create_table "jwt_blacklist", force: :cascade do |t|
     t.string "jti", null: false
@@ -21,10 +27,11 @@ ActiveRecord::Schema.define(version: 2018_12_31_173758) do
   end
 
   create_table "purchases", force: :cascade do |t|
-    t.string "name", limit: 255, null: false
     t.date "purchase_date", null: false
     t.decimal "price", null: false
     t.bigint "user_id"
+    t.bigint "item_id"
+    t.index ["item_id"], name: "index_purchases_on_item_id"
     t.index ["user_id"], name: "index_purchases_on_user_id"
   end
 
