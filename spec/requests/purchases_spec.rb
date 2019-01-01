@@ -78,7 +78,7 @@ RSpec.describe 'Purchases', type: :request do
       name = 'Apples'
       price = 19.20
       post purchases_path, params: { purchase: { name: name, price: price, purchase_date: Date.current } }
-     json_response = JSON.parse(response.body)
+      json_response = JSON.parse(response.body)
       purchase = Purchase.last
       expect(json_response['purchase']['id']).to eq(purchase.id)
       expect(json_response['purchase']['price']).to eq(price.to_s)

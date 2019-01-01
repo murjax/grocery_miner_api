@@ -12,6 +12,8 @@ Rails.application.routes.draw do
     }
   root to: 'home#index'
 
+  resources :items
+
   resources :purchases do
     get :monthly, on: :collection, controller: 'purchases/monthly', to: 'purchases/monthly#index'
     get :yearly, on: :collection, controller: 'purchases/yearly', to: 'purchases/yearly#index'
