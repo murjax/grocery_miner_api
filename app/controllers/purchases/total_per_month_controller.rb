@@ -14,10 +14,13 @@ module Purchases
       end_date = start_date.end_of_month
 
       purchases = purchases.where('purchase_date >= ? AND purchase_date <= ?', start_date, end_date)
-      purchase_prices = purchases.group(:name).sum(:price)
-      report = purchase_prices.map do |key, value|
-        { name: key, price: value }
+
+      report = purchases.pluck(:item_id).uniq.map do |item_id|
+        item = Item.find(item_id)
+        total_price = purchases.where(item: item).sum(:price)
+        { name: item.name, price: total_price }
       end
+
       render json: { purchases: report }, adapter: :json
     end
   end

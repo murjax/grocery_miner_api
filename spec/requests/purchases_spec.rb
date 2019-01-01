@@ -44,19 +44,19 @@ RSpec.describe 'Purchases', type: :request do
     context 'purchase belongs to user' do
       let!(:purchase) { create(:purchase, user: user) }
       it 'updates purchase' do
-        name = 'Apples'
-        put purchase_path(purchase), params: { purchase: { name: name } }
-        expect(purchase.reload.name).to eq(name)
+        price = '5.50'
+        put purchase_path(purchase), params: { purchase: { price: price } }
+        expect(purchase.reload.price).to eq(price.to_f)
         json_response = JSON.parse(response.body)
-        expect(json_response['purchase']['name']).to eq(name)
+        expect(json_response['purchase']['price']).to eq(price.to_f.to_s)
       end
 
       context 'invalid attributes' do
         it 'does not update purchase' do
-          put purchase_path(purchase), params: { purchase: { name: nil } }
-          expect(purchase.name).not_to be_nil
+          put purchase_path(purchase), params: { purchase: { price: nil } }
+          expect(purchase.price).not_to be_nil
           json_response = JSON.parse(response.body)
-          expect(json_response['errors']['name']).to eq("can't be blank")
+          expect(json_response['errors']['price']).to eq("can't be blank")
           expect(response.status).to eq(422)
         end
       end
@@ -75,22 +75,22 @@ RSpec.describe 'Purchases', type: :request do
 
   describe 'POST create' do
     it 'creates purchase' do
-      name = 'Apples'
       price = 19.20
-      post purchases_path, params: { purchase: { name: name, price: price, purchase_date: Date.current } }
+      item = create(:item, user: user)
+      post purchases_path, params: { purchase: { price: price, purchase_date: Date.current, item_id: item.id } }
       json_response = JSON.parse(response.body)
       purchase = Purchase.last
       expect(json_response['purchase']['id']).to eq(purchase.id)
       expect(json_response['purchase']['price']).to eq(price.to_s)
-      expect(json_response['purchase']['name']).to eq(name)
+      expect(json_response['purchase']['item']['id']).to eq(item.id)
     end
 
     context 'invalid attributes' do
       it 'does not create purchase' do
         price = 19.20
-        post purchases_path, params: { purchase: { name: nil, price: price, purchase_date: Date.current } }
+        post purchases_path, params: { purchase: { item_id: nil, price: price, purchase_date: Date.current } }
         json_response = JSON.parse(response.body)
-        expect(json_response['errors']['name']).to eq("can't be blank")
+        expect(json_response['errors']['item']).to eq("must exist")
         expect(response.status).to eq(422)
       end
     end

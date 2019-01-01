@@ -4,7 +4,11 @@ module Purchases
 
     def index
       purchases = Purchase.where(user: current_user).where('purchase_date >= ?', 30.days.ago)
-      names = purchases.group(:name).count.sort_by{ |_, value| -value }.map{ |purchase| purchase.first }[0..4]
+      items = purchases.group(:item_id).count.sort_by{ |_, value| -value }
+      names = items.map do |item_data|
+        item = Item.find(item_data.first)
+        item.name
+      end[0..4]
       render json: { names: names }, adapter: :json
     end
   end

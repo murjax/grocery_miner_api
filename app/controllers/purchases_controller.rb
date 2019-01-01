@@ -10,7 +10,9 @@ class PurchasesController < ApplicationController
   end
 
   def update
-    if purchase.update_attributes(permitted_params)
+    purchase.assign_attributes(permitted_params)
+
+    if purchase.save
       render json: purchase, adapter: :json
     else
       render json: { errors: purchase.errors.to_h }, status: :unprocessable_entity
@@ -38,6 +40,6 @@ class PurchasesController < ApplicationController
   end
 
   def permitted_params
-    params.require(:purchase).permit(:name, :price, :purchase_date)
+    params.require(:purchase).permit(:name, :price, :purchase_date, :item_id)
   end
 end

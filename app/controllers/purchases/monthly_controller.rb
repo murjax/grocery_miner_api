@@ -12,6 +12,7 @@ module Purchases
       end
 
       end_date = start_date.end_of_month
+
       purchases = purchases.where('purchase_date >= ? AND purchase_date <= ?', start_date, end_date)
       render json: purchases, adapter: :json
     end
