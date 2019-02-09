@@ -11,13 +11,13 @@ gem 'devise-jwt'
 gem 'dotenv-rails'
 gem 'rack-cors', require: 'rack/cors'
 gem 'active_model_serializers'
+gem 'bootsnap'
 
 group :development do
   gem 'listen'
 end
 
 group :test do
-  gem 'bootsnap'
   gem 'pry-rails'
   gem 'rspec-rails'
   gem 'database_rewinder'
