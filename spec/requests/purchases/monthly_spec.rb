@@ -25,6 +25,7 @@ RSpec.describe 'Purchases/Monthly', type: :request do
         json_response = JSON.parse(response.body)
         expect(json_response['purchases'].count).to eq(1)
         expect(json_response['purchases'].first['id']).to eq(first_purchase.id)
+        expect(json_response['meta']['total_pages']).to eq(2)
       end
     end
 

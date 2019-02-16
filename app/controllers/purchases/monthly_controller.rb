@@ -15,7 +15,7 @@ module Purchases
 
       purchases = purchases.where('purchase_date >= ? AND purchase_date <= ?', start_date, end_date)
       purchases = purchases.page(params[:page]).per(params[:per_page])
-      render json: purchases, adapter: :json
+      render json: purchases, meta: { total_pages: purchases.total_pages }, adapter: :json
     end
   end
 end
