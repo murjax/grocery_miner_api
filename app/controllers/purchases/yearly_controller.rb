@@ -13,6 +13,8 @@ module Purchases
 
       end_date = start_date.end_of_year
       purchases = purchases.where('purchase_date >= ? AND purchase_date <= ?', start_date, end_date)
+      purchases = purchases.page(params[:page]).per(params[:per_page])
+
       render json: purchases, adapter: :json
     end
   end

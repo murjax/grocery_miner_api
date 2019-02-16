@@ -17,6 +17,17 @@ RSpec.describe 'Purchases/Monthly', type: :request do
       end
     end
 
+    context 'pagination' do
+      it 'paginates with page params' do
+        first_purchase = create(:purchase, user: user)
+        second_purchase = create(:purchase, user: user)
+        get monthly_purchases_path, params: { page: 1, per_page: 1 }
+        json_response = JSON.parse(response.body)
+        expect(json_response['purchases'].count).to eq(1)
+        expect(json_response['purchases'].first['id']).to eq(first_purchase.id)
+      end
+    end
+
     context 'month and year params' do
       it 'returns purchases purchased within given month' do
         this_month_purchase = create(:purchase, user: user, purchase_date: Date.current)
