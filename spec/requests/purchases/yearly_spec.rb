@@ -29,14 +29,15 @@ RSpec.describe 'Purchases/Yearly', type: :request do
       end
     end
 
-    context 'total_count' do
-      it 'includes total count meta' do
+    context 'total_price' do
+      it 'includes total price meta' do
         first_purchase = create(:purchase, user: user)
         second_purchase = create(:purchase, user: user)
+        total = first_purchase.price + second_purchase.price
         get yearly_purchases_path
         json_response = JSON.parse(response.body)
         expect(json_response['purchases'].count).to eq(2)
-        expect(json_response['meta']['total_count']).to eq(2)
+        expect(json_response['meta']['total_price']).to eq(total.to_s)
       end
     end
 
