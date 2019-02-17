@@ -29,6 +29,17 @@ RSpec.describe 'Purchases/Monthly', type: :request do
       end
     end
 
+    context 'total_count' do
+      it 'includes total count meta' do
+        first_purchase = create(:purchase, user: user)
+        second_purchase = create(:purchase, user: user)
+        get monthly_purchases_path
+        json_response = JSON.parse(response.body)
+        expect(json_response['purchases'].count).to eq(2)
+        expect(json_response['meta']['total_count']).to eq(2)
+      end
+    end
+
     context 'month and year params' do
       it 'returns purchases purchased within given month' do
         this_month_purchase = create(:purchase, user: user, purchase_date: Date.current)
