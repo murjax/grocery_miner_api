@@ -17,8 +17,9 @@ module Purchases
 
       report = purchases.pluck(:item_id).uniq.map do |item_id|
         item = Item.find(item_id)
-        total_price = purchases.where(item: item).sum(:price)
-        { name: item.name, price: total_price }
+        item_purchases = purchases.where(item: item)
+        total_price = item_purchases.sum(:price)
+        { name: item.name, price: total_price, count: item_purchases.count}
       end
 
       render json: { purchases: report }, adapter: :json

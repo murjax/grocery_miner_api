@@ -20,6 +20,7 @@ RSpec.describe 'Purchases/Total per month', type: :request do
         expect(json_response['purchases'].count).to eq(1)
         expect(json_response['purchases'].first['name']).to eq(name)
         expect(json_response['purchases'].first['price']).to eq((first_price + second_price).to_s)
+        expect(json_response['purchases'].first['count']).to eq(2)
       end
     end
 
@@ -37,6 +38,7 @@ RSpec.describe 'Purchases/Total per month', type: :request do
         expect(json_response['purchases'].count).to eq(1)
         expect(json_response['purchases'].first['name']).to eq(name)
         expect(json_response['purchases'].first['price']).to eq(second_price.to_s)
+        expect(json_response['purchases'].first['count']).to eq(1)
       end
     end
 
@@ -54,6 +56,7 @@ RSpec.describe 'Purchases/Total per month', type: :request do
         expect(json_response['purchases'].count).to eq(1)
         expect(json_response['purchases'].first['name']).to eq(name)
         expect(json_response['purchases'].first['price']).to eq((first_price + second_price).to_s)
+        expect(json_response['purchases'].first['count']).to eq(2)
       end
     end
 
@@ -71,6 +74,7 @@ RSpec.describe 'Purchases/Total per month', type: :request do
         expect(json_response['purchases'].count).to eq(1)
         expect(json_response['purchases'].first['name']).to eq(name)
         expect(json_response['purchases'].first['price']).to eq((first_price + second_price).to_s)
+        expect(json_response['purchases'].first['count']).to eq(2)
       end
     end
   end
