@@ -1,0 +1,28 @@
+---
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/ruby:2.5.0
+        environment:
+          PGHOST: localhost
+          PGUSER: grocery_miner
+          RAILS_ENV: test
+      - image: postgres:9.5
+        environment:
+          POSTGRES_USER: grocery_miner
+          POSTGRES_DB: grocery_miner_test
+          POSTGRES_PASSWORD: ""
+    steps:
+      - checkout
+      - type: cache-restore
+        name: Restore bundle cache
+        key: grocery_miner-{{ checksum "Gemfile.lock" }}
+      - run: bundle install --path vendor/bundle
+      - type: cache-save
+        name: Store bundle cache
+        key: grocery_miner-{{ checksum "Gemfile.lock" }}
+        paths:
+          - vendor/bundle
+      - run: bundle exec rake db:setup
+      - run: bundle exec rspec
