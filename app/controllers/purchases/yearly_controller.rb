@@ -14,10 +14,12 @@ module Purchases
       end_date = start_date.end_of_year
       purchases = purchases.where('purchase_date >= ? AND purchase_date <= ?', start_date, end_date)
       total_price = purchases.map(&:price).inject(0, :+)
+      total_count = purchases.count
       purchases = purchases.page(params[:page]).per(params[:per_page])
       render json: purchases, meta: {
         total_pages: purchases.total_pages,
-        total_price: total_price
+        total_price: total_price,
+        total_count: total_count
       }, adapter: :json
     end
   end
