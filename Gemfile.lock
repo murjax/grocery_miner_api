@@ -114,6 +114,10 @@ GEM
       concurrent-ruby (~> 1.0)
     io-like (0.3.0)
     jsonapi-renderer (0.2.0)
+    jsonapi-resources (0.9.6)
+      activerecord (>= 4.1)
+      concurrent-ruby
+      railties (>= 4.1)
     jwt (2.1.0)
     kaminari (1.1.1)
       activesupport (>= 4.1.0)
@@ -261,6 +265,7 @@ DEPENDENCIES
   dotenv-rails
   factory_bot_rails
   faker
+  jsonapi-resources
   jwt
   kaminari
   listen
