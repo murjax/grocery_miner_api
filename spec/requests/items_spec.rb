@@ -10,9 +10,9 @@ RSpec.describe 'Items', type: :request do
       item = create(:item, user: user)
       get items_path
       json_response = JSON.parse(response.body)
-      expect(json_response.count).to eq(1)
-      expect(json_response['items'].first['id']).to eq(item.id)
-      expect(json_response['items'].first['name']).to eq(item.name.to_s)
+      expect(json_response['data'].count).to eq(1)
+      expect(json_response['data'].first['id']).to eq(item.id.to_s)
+      expect(json_response['data'].first['attributes']['name']).to eq(item.name.to_s)
     end
   end
 

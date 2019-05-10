@@ -12,7 +12,7 @@ Rails.application.routes.draw do
     }
   root to: 'home#index'
 
-  resources :items
+  jsonapi_resources :items
 
   resources :purchases do
     get :monthly, on: :collection, controller: 'purchases/monthly', to: 'purchases/monthly#index'
