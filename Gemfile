@@ -20,6 +20,7 @@ group :development do
 end
 
 group :test do
+  gem 'awesome_print'
   gem 'capybara'
   gem 'chromedriver-helper'
   gem 'database_rewinder'
