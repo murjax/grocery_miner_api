@@ -9,10 +9,9 @@ RSpec.describe 'Items', type: :request do
     it 'returns user items' do
       item = create(:item, user: user)
       get items_path
-      json_response = JSON.parse(response.body)
-      expect(json_response['data'].count).to eq(1)
-      expect(json_response['data'].first['id']).to eq(item.id.to_s)
-      expect(json_response['data'].first['attributes']['name']).to eq(item.name.to_s)
+      expect(json_response[:data].count).to eq(1)
+      expect(json_response[:data].first['id']).to eq(item.id.to_s)
+      expect(json_response[:data].first.dig(:attributes, :name)).to eq(item.name.to_s)
     end
   end
 
@@ -21,18 +20,16 @@ RSpec.describe 'Items', type: :request do
       let!(:item) { create(:item, user: user) }
       it 'returns item' do
         get item_path(item)
-        json_response = JSON.parse(response.body)
-        expect(json_response['item']['id']).to eq(item.id)
-        expect(json_response['item']['name']).to eq(item.name.to_s)
+        expect(json_response.dig(:data, :id)).to eq(item.id.to_s)
+        expect(json_response.dig(:data, :attributes, :name)).to eq(item.name.to_s)
       end
     end
 
     context 'item does not belong to user' do
       let!(:item) { create(:item) }
       it 'is not found' do
-        expect do
-          get item_path(item)
-        end.to raise_error(ActiveRecord::RecordNotFound)
+        get item_path(item)
+        expect(response.status).to eq(404)
       end
     end
   end
@@ -40,18 +37,51 @@ RSpec.describe 'Items', type: :request do
   describe 'POST create' do
     it 'creates item' do
       name = 'Apples'
-      post items_path, params: { item: { name: name } }
-      json_response = JSON.parse(response.body)
+
+      headers = { 'CONTENT_TYPE' => 'application/vnd.api+json' }
+      post items_path, params: {
+        data: {
+          type: 'items',
+          attributes: {
+            name: name
+          },
+          relationships: {
+            user: {
+              data: {
+                type: 'users',
+                id: user.id
+              }
+            }
+          }
+        }
+      }.to_json, headers: headers
+
       item = Item.last
-      expect(json_response['item']['id']).to eq(item.id)
-      expect(json_response['item']['name']).to eq(name)
+
+      expect(json_response.dig(:data, :id)).to eq(item.id.to_s)
+      expect(json_response.dig(:data, :attributes, :name)).to eq(name)
     end
 
     context 'invalid attributes' do
       it 'does not create item' do
-        post items_path, params: { item: { name: nil } }
-        json_response = JSON.parse(response.body)
-        expect(json_response['errors']['name']).to eq("can't be blank")
+        headers = { 'CONTENT_TYPE' => 'application/vnd.api+json' }
+        post items_path, params: {
+          data: {
+            type: 'items',
+            attributes: {
+              name: nil
+            },
+            relationships: {
+              user: {
+                data: {
+                  type: 'users',
+                  id: user.id
+                }
+              }
+            }
+          }
+        }.to_json, headers: headers
+        expect(json_response[:errors].first[:title]).to eq("can't be blank")
         expect(response.status).to eq(422)
       end
     end
@@ -62,18 +92,38 @@ RSpec.describe 'Items', type: :request do
       let!(:item) { create(:item, user: user) }
       it 'updates item' do
         name = 'Apples'
-        put item_path(item), params: { item: { name: name } }
+        headers = { 'CONTENT_TYPE' => 'application/vnd.api+json' }
+
+        put item_path(item), params: {
+          data: {
+            type: 'items',
+            id: item.id,
+            attributes: {
+              name: name
+            }
+          }
+        }.to_json, headers: headers
+
         expect(item.reload.name).to eq(name)
-        json_response = JSON.parse(response.body)
-        expect(json_response['item']['name']).to eq(name)
+        expect(json_response.dig(:data, :attributes, :name)).to eq(name)
       end
 
       context 'invalid attributes' do
         it 'does not update item' do
-          put item_path(item), params: { item: { name: nil } }
-          expect(item.name).not_to be_nil
-          json_response = JSON.parse(response.body)
-          expect(json_response['errors']['name']).to eq("can't be blank")
+          headers = { 'CONTENT_TYPE' => 'application/vnd.api+json' }
+
+          put item_path(item), params: {
+            data: {
+              type: 'items',
+              id: item.id,
+              attributes: {
+                name: nil
+              }
+            }
+          }.to_json, headers: headers
+          expect(item.reload.name).not_to be_nil
+
+          expect(json_response[:errors].first[:title]).to eq("can't be blank")
           expect(response.status).to eq(422)
         end
       end
@@ -83,9 +133,18 @@ RSpec.describe 'Items', type: :request do
       let!(:item) { create(:item) }
       it 'is not found' do
         name = 'Apples'
-        expect do
-          put item_path(item), params: { item: { name: name } }
-        end.to raise_error(ActiveRecord::RecordNotFound)
+        headers = { 'CONTENT_TYPE' => 'application/vnd.api+json' }
+
+        put item_path(item), params: {
+          data: {
+            type: 'items',
+            id: item.id,
+            attributes: {
+              name: name
+            }
+          }
+        }.to_json, headers: headers
+        expect(response.status).to eq(404)
       end
     end
   end
@@ -103,9 +162,8 @@ RSpec.describe 'Items', type: :request do
     context 'item does not belong to user' do
       it 'does not destroy item' do
         item = create(:item)
-        expect do
-          delete item_path(item)
-        end.to raise_error(ActiveRecord::RecordNotFound)
+        delete item_path(item)
+        expect(response.status).to eq(404)
         expect(item.reload.destroyed?).to eq(false)
       end
     end
@@ -114,9 +172,8 @@ RSpec.describe 'Items', type: :request do
       it 'does not destroy item' do
         item = create(:item)
         create(:purchase, item: item)
-        expect do
-          delete item_path(item)
-        end.to raise_error(ActiveRecord::RecordNotFound)
+        delete item_path(item)
+        expect(response.status).to eq(404)
         expect(item.reload.destroyed?).to eq(false)
       end
     end

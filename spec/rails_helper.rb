@@ -65,4 +65,15 @@ RSpec.configure do |config|
     DatabaseRewinder.clean_all
     FactoryBot.rewind_sequences
   end
+
+  def json_response
+    JSON.parse(response.body).with_indifferent_access
+  rescue
+    ap response.body
+  end
+
+  def json_response_ids
+    return unless json_response && json_response[:data]
+    json_response[:data].map { |data| data[:id] }
+  end
 end

@@ -4,4 +4,8 @@ class ItemResource < JSONAPI::Resource
   has_one :user
 
   filter :user
+
+  def self.records(options = {})
+    options[:context][:current_user].items
+  end
 end
