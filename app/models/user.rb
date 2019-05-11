@@ -6,5 +6,6 @@ class User < ApplicationRecord
   validates :email, presence: true, length: { maximum: 255 }, uniqueness: true
 
   has_many :items
+  has_many :purchases
   has_many :taxes
 end
