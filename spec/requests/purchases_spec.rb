@@ -15,6 +15,49 @@ RSpec.describe 'Purchases', type: :request do
       expect(json_response[:data].first.dig(:attributes, :purchase_date)).to eq(user_purchase.purchase_date.to_s)
       expect(json_response[:data].first.dig(:attributes, :price)).to eq(user_purchase.price.to_s)
     end
+
+    context 'pagination' do
+      it 'paginates with page params' do
+        first_purchase = create(:purchase, user: user)
+        second_purchase = create(:purchase, user: user)
+        get purchases_path, params: { page: { number: 1, size: 1 } }
+        expect(json_response[:data].first['id']).to eq(first_purchase.id.to_s)
+        expect(json_response[:data].count).to eq(1)
+        expect(json_response.dig(:meta, :total_pages)).to eq(2)
+      end
+    end
+
+    context 'filter[month]' do
+      it 'returns purchases purchased during month of given date' do
+        this_month_purchase = create(:purchase, user: user, purchase_date: Date.current)
+        create(:purchase, user: user, purchase_date: Date.current - 2.months)
+        get purchases_path, params: { filter: { month: Date.current } }
+        expect(json_response[:data].count).to eq(1)
+        expect(json_response[:data].first[:id]).to eq(this_month_purchase.id.to_s)
+      end
+    end
+
+    describe 'record_count' do
+      it 'includes record count meta' do
+        count = 12
+        count.times do
+          create(:purchase, user: user)
+        end
+        get purchases_path
+        expect(json_response.dig(:meta, :record_count)).to eq(count)
+      end
+    end
+
+    describe 'total_price' do
+      it 'includes total price meta' do
+        first_purchase = create(:purchase, user: user)
+        second_purchase = create(:purchase, user: user)
+        total = first_purchase.price + second_purchase.price
+        get purchases_path
+        expect(json_response[:data].count).to eq(2)
+        expect(json_response['meta']['total_price']).to eq(total.to_s)
+      end
+    end
   end
 
   describe 'GET show' do
