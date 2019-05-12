@@ -37,6 +37,19 @@ RSpec.describe 'Purchases', type: :request do
       end
     end
 
+    context 'filter[year]' do
+      it 'returns purchases purchased during year of given date' do
+        this_month_purchase = create(:purchase, user: user, purchase_date: Date.current)
+        last_month_purchase = create(:purchase, user: user, purchase_date: Date.current - 2.months)
+        last_year_purchase = create(:purchase, user: user, purchase_date: Date.current - 1.year)
+        get purchases_path, params: { filter: { year: Date.current } }
+        expect(json_response[:data].count).to eq(2)
+        expect(json_response_ids).to include(this_month_purchase.id.to_s)
+        expect(json_response_ids).to include(last_month_purchase.id.to_s)
+        expect(json_response_ids).not_to include(last_year_purchase.id.to_s)
+      end
+    end
+
     describe 'record_count' do
       it 'includes record count meta' do
         count = 12

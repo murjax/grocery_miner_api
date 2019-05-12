@@ -13,6 +13,13 @@ class PurchaseResource < JSONAPI::Resource
     records.where(purchase_date: start_date..end_date)
   }
 
+  filter :year, apply: ->(records, value, _options) {
+    date = Date.parse(value.first)
+    start_date = date.beginning_of_year
+    end_date = date.end_of_year
+    records.where(purchase_date: start_date..end_date)
+  }
+
   def self.records(options = {})
     options[:context][:current_user].purchases
   end
