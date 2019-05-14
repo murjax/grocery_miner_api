@@ -16,7 +16,6 @@ Rails.application.routes.draw do
 
   jsonapi_resources :purchases do
     jsonapi_relationships
-    get :expense, on: :collection, controller: 'purchases/expense', to: 'purchases/expense#index'
     get :frequent, on: :collection, controller: 'purchases/frequent', to: 'purchases/frequent#index'
     get :total_per_month, on: :collection, controller: 'purchases/total_per_month', to: 'purchases/total_per_month#index'
   end

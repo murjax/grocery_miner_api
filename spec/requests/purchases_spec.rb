@@ -28,7 +28,7 @@ RSpec.describe 'Purchases', type: :request do
     end
 
     context 'filter[month]' do
-      it 'returns purchases purchased during month of given date' do
+      it 'returns purchases created during month of given date' do
         this_month_purchase = create(:purchase, user: user, purchase_date: Date.current)
         create(:purchase, user: user, purchase_date: Date.current - 2.months)
         get purchases_path, params: { filter: { month: Date.current } }
@@ -38,7 +38,7 @@ RSpec.describe 'Purchases', type: :request do
     end
 
     context 'filter[year]' do
-      it 'returns purchases purchased during year of given date' do
+      it 'returns purchases created during year of given date' do
         this_month_purchase = create(:purchase, user: user, purchase_date: Date.current)
         last_month_purchase = create(:purchase, user: user, purchase_date: Date.current - 2.months)
         last_year_purchase = create(:purchase, user: user, purchase_date: Date.current - 1.year)
@@ -47,6 +47,30 @@ RSpec.describe 'Purchases', type: :request do
         expect(json_response_ids).to include(this_month_purchase.id.to_s)
         expect(json_response_ids).to include(last_month_purchase.id.to_s)
         expect(json_response_ids).not_to include(last_year_purchase.id.to_s)
+      end
+    end
+
+    context 'filter[days]' do
+      it 'returns purchases created in last given number of days' do
+        yesterday_purchase = create(:purchase, user: user, purchase_date: Date.current - 1.day)
+        last_month_purchase = create(:purchase, user: user, purchase_date: Date.current - 1.month)
+        get purchases_path, params: { filter: { days: 15 } }
+        expect(json_response_ids).to eq([yesterday_purchase.id.to_s])
+      end
+    end
+
+    context 'sort[price]' do
+      let!(:expensive_purchase) { create(:purchase, user: user, price: 100.00) }
+      let!(:cheap_purchase) { create(:purchase, user: user, price: 1) }
+
+      it 'sorts purchases by ascending price' do
+        get purchases_path, params: { sort: 'price' }
+        expect(json_response_ids).to eq([cheap_purchase.id.to_s, expensive_purchase.id.to_s])
+      end
+
+      it 'sorts purchases by descending price' do
+        get purchases_path, params: { sort: '-price' }
+        expect(json_response_ids).to eq([expensive_purchase.id.to_s, cheap_purchase.id.to_s])
       end
     end
 

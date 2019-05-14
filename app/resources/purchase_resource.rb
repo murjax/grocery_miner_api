@@ -20,6 +20,11 @@ class PurchaseResource < JSONAPI::Resource
     records.where(purchase_date: start_date..end_date)
   }
 
+  filter :days, apply: ->(records, value, _options) {
+    start_date = Date.current - value.first.to_i.days
+    records.where('purchase_date >= ?', start_date)
+  }
+
   def self.records(options = {})
     options[:context][:current_user].purchases
   end
