@@ -13,6 +13,44 @@ RSpec.describe 'Items', type: :request do
       expect(json_response[:data].first['id']).to eq(item.id.to_s)
       expect(json_response[:data].first.dig(:attributes, :name)).to eq(item.name.to_s)
     end
+
+    context 'sorting purchase frequency' do
+      let(:item) { create(:item, user: user) }
+      let(:other_item) { create(:item, user: user) }
+
+      before do
+        3.times do
+          create(:purchase, user: user, item: item)
+        end
+
+        2.times do
+          create(:purchase, user: user, item: other_item)
+        end
+      end
+
+      it 'sorts by frequent purchase ascending' do
+        get items_path, params: { sort: 'frequent_purchased' }
+        expect(json_response_ids).to eq([other_item.id.to_s, item.id.to_s])
+      end
+
+      it 'sorts by frequent purchase descending' do
+        get items_path, params: { sort: '-frequent_purchased' }
+        expect(json_response_ids).to eq([item.id.to_s, other_item.id.to_s])
+      end
+    end
+
+    context 'filter[purchased_in_month]' do
+      let(:item) { create(:item, user: user) }
+      let(:other_item) { create(:item, user: user) }
+      let!(:this_month_purchase) { create(:purchase, item: item, purchase_date: Date.current, user: user) }
+      let!(:last_month_purchase) { create(:purchase, item: other_item, purchase_date: Date.current - 40.days, user: user) }
+
+      it 'filters items with purchases made in given month' do
+        get items_path, params: { filter: { purchased_in_month: Date.current } }
+        expect(json_response_ids).to include(item.id.to_s)
+        expect(json_response_ids).not_to include(other_item.id.to_s)
+      end
+    end
   end
 
   describe 'GET show' do

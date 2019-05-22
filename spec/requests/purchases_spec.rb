@@ -59,7 +59,7 @@ RSpec.describe 'Purchases', type: :request do
       end
     end
 
-    context 'sort[price]' do
+    context 'sorting price' do
       let!(:expensive_purchase) { create(:purchase, user: user, price: 100.00) }
       let!(:cheap_purchase) { create(:purchase, user: user, price: 1) }
 
