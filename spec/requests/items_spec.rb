@@ -46,7 +46,7 @@ RSpec.describe 'Items', type: :request do
       let!(:last_month_purchase) { create(:purchase, item: other_item, purchase_date: Date.current - 40.days, user: user) }
 
       it 'filters items with purchases made in given month' do
-        get items_path, params: { filter: { purchased_in_month: Date.current } }
+        get items_path, params: { filter: { purchased_in_month: Date.current.strftime('%m/%d/%Y') } }
         expect(json_response_ids).to include(item.id.to_s)
         expect(json_response_ids).not_to include(other_item.id.to_s)
       end
@@ -73,7 +73,7 @@ RSpec.describe 'Items', type: :request do
   end
 
   describe 'POST create' do
-    it 'creates item' do
+    it 'creates item and sets user to current user' do
       name = 'Apples'
 
       headers = { 'CONTENT_TYPE' => 'application/vnd.api+json' }
@@ -82,14 +82,6 @@ RSpec.describe 'Items', type: :request do
           type: 'items',
           attributes: {
             name: name
-          },
-          relationships: {
-            user: {
-              data: {
-                type: 'users',
-                id: user.id
-              }
-            }
           }
         }
       }.to_json, headers: headers
@@ -98,6 +90,7 @@ RSpec.describe 'Items', type: :request do
 
       expect(json_response.dig(:data, :id)).to eq(item.id.to_s)
       expect(json_response.dig(:data, :attributes, :name)).to eq(name)
+      expect(item.user).to eq(user)
     end
 
     context 'invalid attributes' do

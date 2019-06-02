@@ -15,6 +15,10 @@ gem 'puma', '~> 3.11'
 gem 'rack-cors', require: 'rack/cors'
 gem 'rails', '~> 5.2.1'
 
+group :development, :test do
+  gem 'pry-rails'
+end
+
 group :development do
   gem 'listen'
 end
@@ -26,7 +30,6 @@ group :test do
   gem 'database_rewinder'
   gem 'factory_bot_rails'
   gem 'faker'
-  gem 'pry-rails'
   gem 'rails-controller-testing'
   gem 'rspec-rails'
   gem 'selenium-webdriver'

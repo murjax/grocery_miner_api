@@ -4,17 +4,23 @@ class PurchaseResource < JSONAPI::Resource
   has_one :user
   has_one :item
 
+  before_create do
+    @model.user = context[:current_user]
+  end
+
   filter :user
 
+  filters(:item_id)
+
   filter :month, apply: ->(records, value, _options) {
-    date = Date.parse(value.first)
+    date = Date.strptime(value.first, '%m/%d/%Y')
     start_date = date.beginning_of_month
     end_date = date.end_of_month
     records.where(purchase_date: start_date..end_date)
   }
 
   filter :year, apply: ->(records, value, _options) {
-    date = Date.parse(value.first)
+    date = Date.strptime(value.first, '%m/%d/%Y')
     start_date = date.beginning_of_year
     end_date = date.end_of_year
     records.where(purchase_date: start_date..end_date)

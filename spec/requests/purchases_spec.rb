@@ -31,7 +31,7 @@ RSpec.describe 'Purchases', type: :request do
       it 'returns purchases created during month of given date' do
         this_month_purchase = create(:purchase, user: user, purchase_date: Date.current)
         create(:purchase, user: user, purchase_date: Date.current - 2.months)
-        get purchases_path, params: { filter: { month: Date.current } }
+        get purchases_path, params: { filter: { month: Date.current.strftime('%m/%d/%Y') } }
         expect(json_response[:data].count).to eq(1)
         expect(json_response[:data].first[:id]).to eq(this_month_purchase.id.to_s)
       end
@@ -42,7 +42,7 @@ RSpec.describe 'Purchases', type: :request do
         this_month_purchase = create(:purchase, user: user, purchase_date: Date.current)
         last_month_purchase = create(:purchase, user: user, purchase_date: Date.current - 2.months)
         last_year_purchase = create(:purchase, user: user, purchase_date: Date.current - 1.year)
-        get purchases_path, params: { filter: { year: Date.current } }
+        get purchases_path, params: { filter: { year: Date.current.strftime('%m/%d/%Y') } }
         expect(json_response[:data].count).to eq(2)
         expect(json_response_ids).to include(this_month_purchase.id.to_s)
         expect(json_response_ids).to include(last_month_purchase.id.to_s)
@@ -179,7 +179,7 @@ RSpec.describe 'Purchases', type: :request do
   end
 
   describe 'POST create' do
-    it 'creates purchase' do
+    it 'creates purchase and sets user to current user' do
       price = 19.20
       item = create(:item, user: user)
 
@@ -192,12 +192,6 @@ RSpec.describe 'Purchases', type: :request do
             purchase_date: Date.current
           },
           relationships: {
-            user: {
-              data: {
-                type: 'users',
-                id: user.id
-              }
-            },
             item: {
               data: {
                 type: 'items',
@@ -212,6 +206,7 @@ RSpec.describe 'Purchases', type: :request do
 
       expect(json_response.dig(:data, :id)).to eq(purchase.id.to_s)
       expect(json_response.dig(:data, :attributes, :price)).to eq(purchase.price.to_s)
+      expect(purchase.user).to eq(user)
     end
 
     context 'invalid attributes' do
