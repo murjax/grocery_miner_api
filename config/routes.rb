@@ -13,7 +13,6 @@ Rails.application.routes.draw do
   root to: 'home#index'
 
   jsonapi_resources :items
-
   jsonapi_resources :purchases
 
   resources :taxes
