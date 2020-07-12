@@ -24,7 +24,7 @@ module GroceryMiner
     config.middleware.insert_before 0, Rack::Cors do
       allow do
         origins '*'
-        resource '*', headers: :any, expose: %w(Authorization), methods: [:get, :post, :options]
+        resource '*', headers: :any, expose: %w(Authorization), methods: [:get, :post, :put, :patch, :options]
       end
     end
   end
