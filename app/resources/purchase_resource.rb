@@ -34,4 +34,32 @@ class PurchaseResource < JSONAPI::Resource
   def self.records(options = {})
     options[:context][:current_user].purchases
   end
+
+  def self.find_records(filters, options = {})
+    context = options[:context]
+
+    records = filter_records(filters, options)
+
+    sort_criteria = options.fetch(:sort_criteria) { [] }
+    order_options = construct_order_options(sort_criteria)
+    records = sort_records(records, order_options, context)
+
+    # Everything above this is boilerplate
+    #
+    # We're caching the filtered & sorted recordset here, before pagination, so that we can use
+    # them in the self.top_level_meta response
+    @pre_paginated_records = records = sort_records(records, order_options, context)
+    # Everything below this is boilerplate
+
+    records = apply_pagination(records, options[:paginator], order_options)
+
+    records
+  end
+
+  def self.top_level_meta(_options = {})
+    {
+      total_price: @pre_paginated_records.sum(:price),
+      total_count: @pre_paginated_records.count
+    }
+  end
 end
